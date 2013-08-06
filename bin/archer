@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+
+require 'sounder'
+require 'archer'
+
+sounds = {
+  dangerzone1: 'dangerzone',
+  dangerzone2: 'dangerzone2',
+  dangerzone3: 'dangerzone3',
+  'dangerzone laugh' => 'dangerzone_laugh',
+  'welcome to the dangerzone' => 'welcome_to_the_dangerzone',
+  'zone of danger' => 'zone_of_danger'
+}
+sound_files = {}
+sounds.each do |name, file|
+  sound_files[name] = File.expand_path("../../lib/support/#{file}.m4a", __FILE__)
+end
+
+archer = Sounder::SoundGroup.new sound_files
+
+usage = archer.usage.map do |line|
+  "  #{line}"
+end
+usage = ["archer version #{Archer::VERSION}","Usage:"] + usage
+usage = usage.join "\n"
+
+if ARGV.size == 1 && ARGV[0] == 'random'
+  archer.random
+elsif ARGV.size >= 1 && ARGV[0] != '-h' && ARGV[0] != 'help' && ARGV[0] != '--help'
+  begin
+    archer.play ARGV.join ' '
+  rescue Sounder::UnknownSoundError
+    puts "Error: \"#{ARGV.join ' '}\" does not match a known sound"
+    puts usage
+  end
+else
+  puts usage
+end
