@@ -1,6 +1,6 @@
 # Archer
 
-says "archer"
+plays archer quotes
 
 ## Installation
 
